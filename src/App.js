@@ -1,24 +1,36 @@
-import logo from './logo.svg';
 import './App.css';
-
+import {ProductCart} from './component/ProductCart/ProductCart';
+import { useState, useEffect} from 'react';
+import axios from 'axios';
+import {Filter} from './components/Filter/Filter';
+import {useFilter} from './context/FilterContext/FilterContext'
 function App() {
+  const [products, setProducts] = useState([])
+  const {discount} = useFilter();
+  console.log(discount);
+
+   useEffect(() => {
+    (
+      async() => {
+        try{
+          const {data : {data}} = await axios.get('products.json')
+          setProducts(data);
+        }catch(err){
+          console.log(err);
+        }
+      }
+    )()
+   }, [])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+   <div className='home-page'>
+    <Filter />
+    <main className='container'>
+      {
+        products?.length > 0 && products.map(product => <ProductCart key={product.id} product={product} />)
+      }
+    </main>
+   </div>
   );
 }
 
